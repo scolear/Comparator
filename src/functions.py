@@ -2,6 +2,10 @@ import numpy as np
 from numpy.linalg import norm
 import pandas as pd
 
+from glob import iglob
+import os
+from os import sep
+
 G = 1.487856e-34	# [AU^3*d^-2*kg^-1]
 
 class Planet:

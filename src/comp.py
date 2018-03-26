@@ -13,7 +13,7 @@ import RK_DP as rk
 def main():
 	
 	a = 1
-	if os.path.exists('.' + sep + 'logs/CPUlogs.csv'):
+	if os.path.exists('.' + sep + 'logs' + sep + 'CPUlogs.csv'):
 		a = clear_logs()
 
 	start = timer()
