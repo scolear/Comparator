@@ -46,9 +46,11 @@ def main():
 	N = len(planets)						# Number of bodies
 	
 	# If this is first run / library was cleared, write header for CPUlogs:
-	cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'a')
-	if a == 1:								
+	if a == 1:
+		cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'w')	
 		cpu_logs.write('Type Method Name Step CPU\n')
+	elif a == 0:
+		cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'a')
 	
 
 	print('Number of objects:', N,
