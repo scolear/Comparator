@@ -25,6 +25,7 @@ def clear_logs():
 
 def main():
 	
+	a = 1
 	if os.path.exists('.' + sep + 'logs/CPUlogs.csv'):
 		a = clear_logs()
 
