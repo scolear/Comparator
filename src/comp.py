@@ -6,22 +6,15 @@ from glob import iglob
 from timeit import default_timer as timer
 
 import functions as fu
+from functions import clear_logs
 import RK_DP as rk
 
 
 def main():
 	
-	del_choice = input('Do you want to clear library of previous logs? [y/n]: ')
-	if del_choice == 'y' or del_choice == 'yes':
-		for path in iglob('.' + sep + 'logs' + sep + 'output*'):		# Clearing previous runs
-			os.remove(path)
-		os.remove('.' + sep + 'logs' + sep + 'CPUlogs.csv')
-		for path in iglob('.' + sep + 'logs' + sep + 'RKDP_ERRS_*'):
-			os.remove(path)
-		print("Library cleared.\n")
-	elif del_choice == 'n' or del_choice == 'no':
-		print('Leaving previous logs intact.\n')
-
+	a = 1
+	if os.path.exists('.' + sep + 'logs' + sep + 'CPUlogs.csv'):
+		a = clear_logs()
 
 	start = timer()
 	try:
@@ -47,11 +40,17 @@ def main():
 	T = 0									# Time at start of integration
 	step = 0
 	M = 10									# Logging frequency for fixed ts methods (!!!)
-
-	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb)	# Creating the initial SS, like a meticulous god
-	N = len(planets)										# Number of bodies
-	cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'a')
-	cpu_logs.write('Type Method Name Step CPU\n')
+	
+	# Creating the initial SS, like a meticulous god:
+	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb)
+	N = len(planets)						# Number of bodies
+	
+	# If this is first run / library was cleared, write header for CPUlogs:
+	if a == 1:
+		cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'w')	
+		cpu_logs.write('Type Method Name Step CPU\n')
+	elif a == 0:
+		cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'a')
 	
 
 	print('Number of objects:', N,

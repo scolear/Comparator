@@ -2,6 +2,10 @@ import numpy as np
 from numpy.linalg import norm
 import pandas as pd
 
+from glob import iglob
+import os
+from os import sep
+
 G = 1.487856e-34	# [AU^3*d^-2*kg^-1]
 
 class Planet:
@@ -193,3 +197,17 @@ def log_data(file, step, T, N, planets):
 		for i in range(N):
 			for j in range(3):
 				file.write(str(planets[i].pos[j]) + ' ')
+
+def clear_logs():
+	del_choice = input('Do you want to clear library of previous logs? [y/n]: ')
+	if del_choice == 'y' or del_choice == 'yes':
+		for path in iglob('.' + sep + 'logs' + sep + 'output*'):		# Clearing previous runs
+			os.remove(path)
+		os.remove('.' + sep + 'logs' + sep + 'CPUlogs.csv')
+		for path in iglob('.' + sep + 'logs' + sep + 'RKDP_ERRS_*'):
+			os.remove(path)
+		print("Library cleared.\n")
+		return 1
+	elif del_choice == 'n' or del_choice == 'no':
+		print('Leaving previous logs intact.\n')
+		return 0
