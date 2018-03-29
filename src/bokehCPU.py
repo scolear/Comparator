@@ -1,6 +1,8 @@
-import pandas as pd
 from glob import iglob
 from os import sep
+
+import pandas as pd
+
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool
@@ -47,9 +49,6 @@ def fix_cpu_tab(df_CPU):
 	dfix = df_CPU[df_CPU['Type'] == 'fix'].copy()
 	dfix.Step = dfix.Step.astype(str)
 	group = dfix.groupby(['Step', 'Method'])
-
-	# Try this:
-	# Valahogyan előtte kéne sortolni a dataframet....
 
 	source = ColumnDataSource(group)
 

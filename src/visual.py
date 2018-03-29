@@ -2,16 +2,13 @@
 
 """
 from os import sep
+
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import numpy as np
 from numpy.linalg import norm
 
-#df_E = pd.read_csv('output_E.csv', delim_whitespace = True, float_precision = 'high')
-#df_V = pd.read_csv('output_V.csv', delim_whitespace = True, float_precision = 'high')
-# df_JPL_JUP = pd.read_csv('./logs/Jupiter_1900_2000_10.csv', skipinitialspace = True, float_precision = 'high')
-# df_JPL_CG = pd.read_csv('./logs/67P_1900_2100_10.csv', skipinitialspace = True, float_precision = 'high')
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 path = '.' + sep + 'logs' + sep + 'output_RKDP_'+str(w_err_range.result[1])+'.csv'
 df_RK = pd.read_csv(path, delim_whitespace = True, float_precision = 'high')

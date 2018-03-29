@@ -1,17 +1,20 @@
-import numpy as np
-import pandas as pd
 import os
 from os import sep
 from glob import iglob
 from timeit import default_timer as timer
 
+import numpy as np
+import pandas as pd
+
 import functions as fu
-from functions import clear_logs
+from functions import Euler, Verlet, RK4, clear_logs, Reset, Acceleration
 import RK_DP as rk
+from RK_DP import Derivatives, RungeKutta
 
 
 def main():
 	
+	# Decide if log library is to be cleared:
 	a = 1
 	if os.path.exists('.' + sep + 'logs' + sep + 'CPUlogs.csv'):
 		a = clear_logs()
@@ -36,7 +39,6 @@ def main():
 		tol_range_max = 6
 		tol_range_min = 5
 
-	
 	T = 0									# Time at start of integration
 	step = 0
 	M = 10									# Logging frequency for fixed ts methods (!!!)
@@ -52,13 +54,11 @@ def main():
 	elif a == 0:
 		cpu_logs = open('.' + sep + 'logs' + sep + 'CPUlogs.csv', 'a')
 	
+	print(f"Number of objects: {N}",
+			f"\nTotal time [days]: {Ttot}",
+			f"\nTimeStep range: {ts_range_min} - {ts_range_max}",
+			f"\nTolerance range: 1.0E-{tol_range_min} - 1.0E-{tol_range_max}\n")
 
-	print('Number of objects:', N,
-			'\nTotal time [days]:', Ttot, 
-			'\nTimeStep range: {} - {}'.format(ts_range_min,ts_range_max),
-			'\nTolerance range: 1.0E-{} - 1.0E-{}'.format(tol_range_min, tol_range_max),
-			'\n')
-	
 	if method == 'All' or method == 'Euler':
 		print('Euler integration...')
 	
@@ -66,20 +66,19 @@ def main():
 			
 			print('{} days timestep:'.format(dT), end='\t')
 			nsteps = Ttot//dT
-			T, step = fu.Reset(planets, T, step)					# Resetting initial pos,vel,T
+			T, step = Reset(planets, T, step)					# Resetting initial pos,vel,T
 			filename = '.' + sep + 'logs' + sep + 'output_E_' + str(dT) + '.csv'				# adaptive filenaming
 			dat_file = open(filename, 'w')
 			name = 'E_' + str(dT)
 			fu.log_data(dat_file, step, T, N, planets)
 	
 			startE = timer()
+			
 			for i in range(round(nsteps / M)):
-
 				for j in range(M):									# Running it M times before logging
 					step += 1
 					T += dT
-					fu.Euler(N, planets, dT)						# Stepper
-
+					Euler(N, planets, dT)						# Stepper
 				fu.log_data(dat_file, step, T, N, planets)
 				
 			cpuE = timer() - startE
@@ -95,20 +94,20 @@ def main():
 		
 			print('{} days timestep:'.format(dT), end='\t')
 			nsteps = Ttot//dT
-			T, step = fu.Reset(planets, T, step)					# Resetting initial pos,vel,T
+			T, step = Reset(planets, T, step)					# Resetting initial pos,vel,T
 			filename = '.' + sep + 'logs' + sep + 'output_V_' + str(dT) + '.csv'				# adaptive filenaming
 			dat_file = open(filename, 'w')
 			name = 'V_' + str(dT)
 			fu.log_data(dat_file, step, T, N, planets)
 	
 			startV = timer()
-			fu.Acceleration(N,planets)								# initial acceleration
+			Acceleration(N,planets)								# initial acceleration
 			for i in range(round(nsteps / M)):
 
 				for j in range(M):									# Running it M times before logging
 					step += 1
 					T += dT
-					fu.Verlet(N, planets, dT)						# Stepper
+					Verlet(N, planets, dT)						# Stepper
 
 				fu.log_data(dat_file, step, T, N, planets)
 
@@ -127,7 +126,7 @@ def main():
 		
 			print('{} days timestep:'.format(dT), end='\t')
 			nsteps = Ttot//dT
-			T, step = fu.Reset(planets, T, step)
+			T, step = Reset(planets, T, step)
 			filename = '.' + sep + 'logs' + sep + 'output_RK4_' + str(dT) + '.csv'
 			dat_file = open(filename, 'w')
 			name = 'RK4_' + str(dT)
@@ -141,15 +140,13 @@ def main():
 			u = np.array(u)
 			
 			startRK4 = timer()
+			
 			for i in range(round(nsteps / M)):
-
 				for j in range(M):									# Running it M times before logging
 					step += 1
 					T += dT
-					
-					dudt = rk.Derivatives(T, u, planets)
-					u = fu.RK4(u, dudt, nodes, T, dT, rk.Derivatives, planets)		# Step
-					
+					dudt = Derivatives(T, u, planets)
+					u = RK4(u, dudt, nodes, T, dT, Derivatives, planets)		# Step		
 				fu.log_data(dat_file, step, T, N, planets)
 				
 			cpuRK4 = timer()-startRK4
@@ -167,22 +164,23 @@ def main():
 			tol = pow(10, -k)
 			print('{} tolerance:'.format(tol), end='\t')
 			dT = ts_range_min
-			T, step = fu.Reset(planets, T, step)
+			T, step = Reset(planets, T, step)
 			name = 'RKDP_' + str(k)
 			filename = '.' + sep + 'logs' + sep + 'output_RKDP_' + str(k) + '.csv'
 			errfile = '.' + sep + 'logs' + sep + 'RKDP_ERRS_'+ str(k)+'.csv'
 			
 			startRK = timer()
-			rk.RungeKutta(Ttot, planets, dT, tol, filename, errfile)
+
+			RungeKutta(Ttot, planets, dT, tol, filename, errfile)
 			
 			cpuRKDP = timer()-startRK
 			print('{:.4f} seconds.\n'.format(cpuRKDP))
 			
 			cpu_logs.write('adap RKDP '+name+' '+str(k)+' '+str(cpuRKDP)+'\n')
-		
+
+			
 	cpuTot = timer()-start
-	print('Whole program took {0:.2f} seconds.'.format(cpuTot))
-	
+	print('Whole program took {0:.2f} seconds.'.format(cpuTot))	
 	cpu_logs.close()
 	
 

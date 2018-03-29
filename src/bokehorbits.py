@@ -1,7 +1,9 @@
-import pandas as pd
 from glob import iglob
 from os import sep
+
+import pandas as pd
 import numpy as np
+
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
 from bokeh.models.widgets import Panel, Tabs

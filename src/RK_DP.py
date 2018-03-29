@@ -1,7 +1,8 @@
-import numpy as np
-from numpy.linalg import norm
 import sys
 import warnings
+
+import numpy as np
+from numpy.linalg import norm
 
 from functions import Acceleration, total_energy
 

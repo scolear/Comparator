@@ -1,10 +1,10 @@
-import numpy as np
-from numpy.linalg import norm
-import pandas as pd
-
 from glob import iglob
 import os
 from os import sep
+
+import numpy as np
+from numpy.linalg import norm
+import pandas as pd
 
 G = 1.487856e-34	# [AU^3*d^-2*kg^-1]
 
@@ -35,7 +35,7 @@ class Planet:
 def SolarSystem_init(init_file_path, inbb):
 	""" This function reads a csv file containing the Names, Masses,
 	initial positions and velocities of the planets, and stores them in
-	a list called 'planets', which it returns.
+	a list of planet objects called 'planets', which it returns.
 	Also receives a flag 'inbb', which is True, if it should include the inner planets (except Mercury),
 	and False if not.
 	"""
@@ -94,7 +94,7 @@ def Euler(N, pl, dt):
 	
 	for i in range(N):
 		pl[i].pos = pl[i].pos + dt * pl[i].vel			# position update
-		pl[i].vel = pl[i].vel + dt * pl[i].acc		# velocity update
+		pl[i].vel = pl[i].vel + dt * pl[i].acc			# velocity update
 
 
 def Verlet(n, pl, dt):
@@ -163,6 +163,7 @@ def Reset(planets, T, step):
 		planets[i].vel = planets[i].vel_init
 	return 0, 0
 	
+	
 def total_energy(N, planets):
 	""" Calculates total energy of the system of N planets by calculating Kinetic energy K, and Potential energy U."""
 	K = 0
@@ -198,6 +199,7 @@ def log_data(file, step, T, N, planets):
 			for j in range(3):
 				file.write(str(planets[i].pos[j]) + ' ')
 
+				
 def clear_logs():
 	del_choice = input('Do you want to clear library of previous logs? [y/n]: ')
 	if del_choice == 'y' or del_choice == 'yes':

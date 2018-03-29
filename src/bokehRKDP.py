@@ -4,21 +4,23 @@ This module plots the error terms of the RKDP method
 Also plots StepSize changes in a subplot, using a shared y_axes range.
 """
 from os import sep
+from glob import iglob
+
 import pandas as pd
+
 from bokeh.io import show, output_notebook, export_png, save, output_file
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool, BoxAnnotation
 from bokeh.models.widgets import Panel, Tabs
 from bokeh.layouts import column
-
-from glob import iglob
 output_notebook()
 
 PLOT_WIDTH = 700
 PLOT_HEIGHT = 500
 
 def process_rkdp_err(path):
-	""" This function gets a filepath (path) to a log file of errors in the RKDP method, and draws the two subplots using dataframes. Creates the layout, which is stored in a tab; the tab is returned.
+	""" This function gets a filepath (path) to a log file of errors in the RKDP method,
+	and draws the two subplots using dataframes. Creates the layout, which is stored in a tab; the tab is returned.
 	"""
 	name = (path.rstrip('.csv')).lstrip('.' + sep + 'logs' + sep + 'RKDP_')
 	df_ERR = pd.read_csv(path, delim_whitespace= True, float_precision = 'high')
@@ -67,8 +69,7 @@ def process_rkdp_err(path):
 	lay = column(p, p2)							# Outlay
 	
 	tab = Panel(child = lay, title = str(name))
-	#output_file((str(name)+'.png'))
-	#export_png(tab, filename = (str(name)+'.png'))
+	
 	return tab
 	
 
