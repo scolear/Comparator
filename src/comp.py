@@ -65,27 +65,35 @@ def main():
 		for dT in range(ts_range_min, ts_range_max+1):
 			
 			print('{} days timestep:'.format(dT), end='\t')
+			
+			# Resetting initial pos,vel,T:
+			T, step = Reset(planets, T, step)
 			nsteps = Ttot//dT
-			T, step = Reset(planets, T, step)					# Resetting initial pos,vel,T
-			filename = '.' + sep + 'logs' + sep + 'output_E_' + str(dT) + '.csv'				# adaptive filenaming
+			
+			# Adaptive filenaming:
+			filename = '.' + sep + 'logs' + sep + 'output_E_' + str(dT) + '.csv'				
 			dat_file = open(filename, 'w')
 			name = 'E_' + str(dT)
+			
+			# Logging header and initial data:
 			fu.log_data(dat_file, step, T, N, planets)
 	
 			startE = timer()
 			
+			# Start integration:
+			# Running it M times before logging:
 			for i in range(round(nsteps / M)):
-				for j in range(M):									# Running it M times before logging
+				for j in range(M):								
 					step += 1
 					T += dT
-					Euler(N, planets, dT)						# Stepper
+					Euler(N, planets, dT)
 				fu.log_data(dat_file, step, T, N, planets)
-				
+			
+			# Logging CPU time:
 			cpuE = timer() - startE
 			print('{:.4f} seconds.\n'.format(cpuE))
-			dat_file.close()
-			
 			cpu_logs.write('fix E '+name+' '+str(dT)+' '+str(cpuE)+'\n')
+			dat_file.close()
 			
 	if method == 'All' or method == 'Verlet':
 		print('Verlet integration...')
