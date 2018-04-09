@@ -105,26 +105,26 @@ def Euler(N, pl, dt):
 		pl[i].vel = pl[i].vel + dt * pl[i].acc			# velocity update
 
 
-def Verlet(n, pl, dt):
-	""" Does one round of Verlet integration from initial r, v, a of 'n' number of planets,
+def Verlet(N, pl, dt):
+	""" Does one round of Verlet integration from initial r, v, a of 'N' number of planets,
 	using 'pl' as a list of planet objects, and using a 'dt' timestep.
 	"""
 	
-	# Update x using acc(t) for all planets:
-	for i in range(n):
+	# Update r using acc(t) for all planets:
+	for i in range(N):
 		pl[i].pos = pl[i].pos + pl[i].vel * dt + 0.5 * pl[i].acc * dt**2
 		# Store acc(t) in temp:
 		pl[i].acc_temp = pl[i].acc
 		
 	# Calculate acc(t+1):
-	Acceleration(n, pl)
+	Acceleration(N, pl)
 	
 	# Calculate v(t+1) using temp + acc(t+1):
-	for i in range(n):
+	for i in range(N):
 		pl[i].vel = pl[i].vel + 0.5 * (pl[i].acc_temp + pl[i].acc) * dt
 
 
-def RK4(u, dudt, n, t, h, derivs, planets):
+def RK4(u, dudt, n, t, dt, derivs, planets):
 
 	a21 = (1.0 / 2.0)
 	a31 = 0
@@ -147,19 +147,19 @@ def RK4(u, dudt, n, t, h, derivs, planets):
 	unew = [np.array([]) for _ in range(n)]
 	
 	for i in range(n):					  # First step
-		utemp[i] = u[i] + h*a21*dudt[i]
-	K2 = derivs(t + c2*h, utemp, planets)	# Second step; Array!
+		utemp[i] = u[i] + dt*a21*dudt[i]
+	K2 = derivs(t + c2*dt, utemp, planets)	# Second step; Array!
 	
 	for i in range(n):						
-		utemp[i] = u[i] + h*(a31*dudt[i] + a32*K2[i])
-	K3 = derivs(t + c3*h, utemp, planets)	# Third step
+		utemp[i] = u[i] + dt*(a31*dudt[i] + a32*K2[i])
+	K3 = derivs(t + c3*dt, utemp, planets)	# Third step
 	
 	for i in range(n):
-		utemp[i] = u[i] + h*(a41*dudt[i] + a42*K2[i] + a43*K3[i])
-	K4 = derivs(t + c4*h, utemp, planets)	# Fourth step
+		utemp[i] = u[i] + dt*(a41*dudt[i] + a42*K2[i] + a43*K3[i])
+	K4 = derivs(t + c4*dt, utemp, planets)	# Fourth step
 	
 	for i in range(n):						
-		unew[i] = u[i] + h*(b1*dudt[i] + b2*K2[i] + b3*K3[i] + b4*K4[i])			# Accumulate increments
+		unew[i] = u[i] + dt*(b1*dudt[i] + b2*K2[i] + b3*K3[i] + b4*K4[i])			# Accumulate increments
 		
 	return unew
 

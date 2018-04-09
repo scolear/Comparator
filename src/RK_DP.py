@@ -1,5 +1,6 @@
 import sys
 import warnings
+from timeit import default_timer as timer
 
 import numpy as np
 from numpy.linalg import norm
@@ -15,7 +16,8 @@ ERRCON = 1.89E-4
 
 		
 def Derivatives(t, u, planets):
-	""" This function returns the derivatives of the elements of state 'u = [r1, v1, r2, v2, ...]'. Returns velocity and acceleration 'diffs = [dr1dt, dv1dt, ...] = [v1, a1, v2, a2, ...]'.
+	""" This function returns the derivatives of the elements of state 'u = [r1, v1, r2, v2, ...]'.
+	Returns velocity and acceleration 'diffs = [dr1dt, dv1dt, ...] = [v1, a1, v2, a2, ...]'.
 	"""
 	N = len(planets)
 	z = 0
@@ -128,13 +130,12 @@ def RKDP(u, dudt, n, t, h, derivs, planets):
 
 def RKQS(u, dudt, n, t, htry, uscale, derivs, eps, planets, err_file):
 	""" 
-	--- Runge-Kutta Quality Controlled Step ---
+	--- Runge-Kutta Quality-Controlled Step ---
 	Fifth order RKDP step with monitoring of local truncation error. 
 	'u' = state at the beginning of step, 'dudt' = starting derivatives, 'eps' = tolerance, array 'uscale' = scaling of error-checking,
 	Returns the new state 'unew', the next time value 'tnew', and the estimated next step-size 'hnext'.
 	Based on the code from "Numerical Recipes in C" (ISBN 0-521-43108-5)
 	"""
-	
 	h = htry					# step-size to be tried
 	utry = np.array([])			# state to be tried
 	unew = np.array([])		
@@ -175,7 +176,6 @@ def RKQS(u, dudt, n, t, htry, uscale, derivs, eps, planets, err_file):
 		
 def RungeKutta(Ttot, planets, dtstart, eps, filename, errfile):
 	
-	
 	dat_file_RK = open(filename, 'w')
 	err_file = open(errfile,'w')
 	h = dtstart
@@ -191,30 +191,38 @@ def RungeKutta(Ttot, planets, dtstart, eps, filename, errfile):
 	u = np.array(u)
 
 	uscale = [np.array([]) for _ in range(nodes)]
-	log_RK(dat_file_RK, step, T, h, 0, N, planets)									# Initial logging
+	log_RK(dat_file_RK, step, T, h, 0, N, planets)							# Initial logging
+	
+	start = timer()
 	
 	while (T < Ttot):
 	
-		dudt = Derivatives(T, u, planets)											# Starting diffs
+		dudt = Derivatives(T, u, planets)									# Starting diffs
 		
 		for i in range(nodes):
-			uscale[i] = abs(u[i]) + abs(dudt[i] * h) + TINY						# Scaling for monitoring accuracy
+			uscale[i] = abs(u[i]) + abs(dudt[i] * h) + TINY				# Scaling for monitoring accuracy
 		
-		if ((T + h - Ttot) * (T + h) > 0.0):										# If step-size oveshoots, decrease.
-			h = Ttot - T			
+		if ((T + h - Ttot) * (T + h) > 0.0):								# If step-size oveshoots, decrease.
+			h = Ttot - T
 			
-		u, T, h, hdid, errmax = RKQS(u, dudt, nodes, T, h, uscale, Derivatives, eps, planets, err_file) # Take a QC step.
+		# Take a QC step:	
+		u, T, h, hdid, errmax = RKQS(u, dudt, nodes, T, h, uscale, Derivatives, eps, planets, err_file) 
 		step += 1
 		
-		log_RK(dat_file_RK, step, T, hdid, errmax, N, planets)							# Log data
-		
+		log_RK(dat_file_RK, step, T, hdid, errmax, N, planets)				# Log data
+	
+	end = timer()
+	
 	dat_file_RK.close()
 	err_file.close()
-
+	
+	return(end-start)
+	
 
 def log_RK(file, step, T, hsize, err, N, planets):
-	""" This function logs the current Step, time T, Total energy of the system, StepSize, Error, and the x,y,z coordinates of all the objects."""
-	
+	""" This function logs the current Step, time T, Total energy of the system,
+	StepSize, Error, and the x,y,z coordinates of all the objects.
+	"""
 	Etot = total_energy(N, planets)
 	
 	if T == 0:

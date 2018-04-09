@@ -176,12 +176,9 @@ def main():
 			name = 'RKDP_' + str(k)
 			filename = '.' + sep + 'logs' + sep + 'output_RKDP_' + str(k) + '.csv'
 			errfile = '.' + sep + 'logs' + sep + 'RKDP_ERRS_'+ str(k)+'.csv'
-			
-			startRK = timer()
 
-			RungeKutta(Ttot, planets, dT, tol, filename, errfile)
+			cpuRKDP = RungeKutta(Ttot, planets, dT, tol, filename, errfile)
 			
-			cpuRKDP = timer()-startRK
 			print('{:.4f} seconds.\n'.format(cpuRKDP))
 			
 			cpu_logs.write('adap RKDP '+name+' '+str(k)+' '+str(cpuRKDP)+'\n')
