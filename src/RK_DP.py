@@ -143,15 +143,15 @@ def RKQS(u, dudt, n, t, htry, uscale, derivs, eps, planets, err_file):
 	scalee = [np.array([]) for _ in range(n)]
 	
 	while True:
+	
 		utry, errors = RKDP(u, dudt, n, t, h, derivs, planets)			# Take a step
 		for i in range(n):
 			scalee[i] = (errors[i]/uscale[i])/eps
-			
 		log_errors(err_file, t, n, planets, scalee)
 		
 		errmax = 0.0											
-		for i in range(n):
-			errmax = max(errmax, abs(norm(errors[i]/uscale[i])))		# Determine largest error
+		for i in range(n):												# Determine largest error
+			errmax = max(errmax, abs(norm(errors[i]/uscale[i])))		
 		errmax /= eps
 		
 		if (errmax <= 1.0):
@@ -202,7 +202,7 @@ def RungeKutta(Ttot, planets, dtstart, eps, filename, errfile):
 		for i in range(nodes):
 			uscale[i] = abs(u[i]) + abs(dudt[i] * h) + TINY				# Scaling for monitoring accuracy
 		
-		if ((T + h - Ttot) * (T + h) > 0.0):								# If step-size oveshoots, decrease.
+		if ((T + h - Ttot) * (T + h) > 0.0):								# If step-size overshoots, decrease.
 			h = Ttot - T
 			
 		# Take a QC step:	
