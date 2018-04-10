@@ -145,7 +145,8 @@ def RKQS(u, dudt, n, t, htry, uscale, derivs, eps, planets, err_file):
 	while True:
 	
 		utry, errors = RKDP(u, dudt, n, t, h, derivs, planets)			# Take a step
-		for i in range(n):
+		
+		for i in range(n):												# Logging scaled errors
 			scalee[i] = (errors[i]/uscale[i])/eps
 		log_errors(err_file, t, n, planets, scalee)
 		
