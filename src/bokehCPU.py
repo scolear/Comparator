@@ -11,9 +11,9 @@ from bokeh.transform import factor_cmap
 from bokeh.palettes import viridis, inferno, Category20
 output_notebook()
 
-
 PLOT_WIDTH = 700
 PLOT_HEIGHT = 500
+
 
 def all_cpu_tab(df_CPU):
 	source = ColumnDataSource(df_CPU)
@@ -73,20 +73,6 @@ def fix_cpu_tab(df_CPU):
 	return tab7
 
 	
-def path_to_dataframes(path):
-	""" This function reads every log file in 'path', 
-	and creates a dictionary containing every dataframe, structured as such: 
-	{method_stepsize1 : dataframe1, method_stepsize2 : dataframe2, ...}
-	"""
-	
-	dtfrms_dict = {}
-	for patho in iglob(path):
-		nombre = (patho.rstrip('.csv')).lstrip('.' + sep + 'logs' + sep + 'output_')
-		dataframe = pd.read_csv(patho, delim_whitespace = True, float_precision = 'high')
-		dtfrms_dict[nombre] = dataframe
-	return dtfrms_dict
-
-	
 def error_change_tab(dtfrms):
 
 	p3 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
@@ -102,6 +88,7 @@ def error_change_tab(dtfrms):
 			percentage_change = (((elem[j]) - (elem[j-1])) / (elem[j-1])) * 100
 			ser.append(percentage_change)
 
+		# Creating new column in dataframe:
 		dtfrms[name]['Ediff'] = pd.Series(ser)
 	
 		line = p3.line(x = dtfrms[name]['T'], y = dtfrms[name]['Ediff'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
@@ -119,6 +106,21 @@ def error_change_tab(dtfrms):
 	
 	tab = Panel(child = p3, title = 'All: Energy')
 	return tab
+
+	
+def path_to_dataframes(path):
+	""" This function reads every log file in 'path', 
+	and creates a dictionary containing every dataframe, structured as such: 
+	{method1_stepsize1 : dataframe11, method1_stepsize2 : dataframe12, ..., 
+	method2stepsize1 : dataframe21, ...}
+	"""
+	
+	dtfrms_dict = {}
+	for patho in iglob(path):
+		nombre = (patho.rstrip('.csv')).lstrip('.' + sep + 'logs' + sep + 'output_')
+		dataframe = pd.read_csv(patho, delim_whitespace = True, float_precision = 'high')
+		dtfrms_dict[nombre] = dataframe
+	return dtfrms_dict
 	
 	
 def main():
