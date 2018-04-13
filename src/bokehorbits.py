@@ -25,6 +25,13 @@ def page_setup(pages, df_JPL_CG, df_JPL_JUP, hover):
 
 def main():
 
+	if w_cg.result is True:
+		name_list = ["67P/C-G", "Jupiter", "Saturn", "Uranus", "Neptune"]
+		name = "67P/C-G"
+	else:
+		name_list = ["Jupiter", "Saturn", "Uranus", "Neptune"]
+		name = "Jupiter"
+	
 	ts_range_max = w_ts_range.result[1]
 	ts_range_min = w_ts_range.result[0]
 	tol_range_max = w_err_range.result[1]
@@ -84,7 +91,6 @@ def main():
 	
 		source = ColumnDataSource(dataframe)
 		
-		name = 'Jupiter'
 		namex = name+'X'
 		namey = name+'Y'
 	
@@ -116,6 +122,7 @@ def main():
 	tablist = []
 	z = 0
 	for page in pages:
+	
 		page.legend.click_policy = "hide"
 		
 		title = ['All', 'Euler', 'Verlet', 'RK4', 'RKDP']
