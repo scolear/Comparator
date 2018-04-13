@@ -41,13 +41,14 @@ def main():
 		tol_range_max = 6
 		tol_range_min = 5
 
+		
+	# Creating the initial SS, like a meticulous god:
+	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb, cg)
+	
+	N = len(planets)						# Number of bodies
 	T = 0									# Time at start of integration
 	step = 0
 	M = 10									# Logging frequency for fixed ts methods (!!!)
-	
-	# Creating the initial SS, like a meticulous god:
-	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb, cg)
-	N = len(planets)						# Number of bodies
 	
 	# If this is first run / library was cleared, write header for CPUlogs:
 	if a == 1:
