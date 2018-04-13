@@ -30,7 +30,7 @@ def main():
 	tol_range_max = w_err_range.result[1]
 	tol_range_min = w_err_range.result[0]	
 
-	df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_10.csv', skipinitialspace = True, float_precision = 'high')
+	df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
 	df_JPL_CG = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
 	
 	# Creating T column of JPL dataframes:
