@@ -23,6 +23,7 @@ def main():
 	try:
 		method = w_Ich.result				# Integrator method selection
 		Ttot = w_Ttot.result				# Total integration time
+		cg = w_cg.result					# Include 67P/C-G?
 		inbb = w_InnPl.result				# Include inner planets?
 		ts_range_max = w_ts_range.result[1]
 		ts_range_min = w_ts_range.result[0]
@@ -33,6 +34,7 @@ def main():
 		print('Running with default values.')
 		method = 'All'
 		Ttot = 36524
+		cg = True
 		inbb = False
 		ts_range_max = 10
 		ts_range_min = 8
@@ -44,7 +46,7 @@ def main():
 	M = 10									# Logging frequency for fixed ts methods (!!!)
 	
 	# Creating the initial SS, like a meticulous god:
-	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb)
+	planets = fu.SolarSystem_init('.' + sep + 'addendum' + sep + 'start_pos.csv', inbb, cg)
 	N = len(planets)						# Number of bodies
 	
 	# If this is first run / library was cleared, write header for CPUlogs:

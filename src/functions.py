@@ -34,7 +34,7 @@ class Planet:
 		return fr
 		
 		
-def SolarSystem_init(init_file_path, inbb):
+def SolarSystem_init(init_file_path, inbb, cg):
 	""" This function reads a csv file containing the Names, Masses,
 	initial positions and velocities of the planets, and stores them in
 	a list of planet objects called 'planets', which it returns.
@@ -44,15 +44,17 @@ def SolarSystem_init(init_file_path, inbb):
 	
 	df_start = pd.read_csv(init_file_path, skipinitialspace = True, float_precision = 'high')
 	planets = []
+	inner_planets = ['Venus', 'Earth', 'Mars']
 	
 	for i in range(len(df_start)):
 		sel_pl = df_start.iloc[i]
 		name = sel_pl['Name']
 		
-		# Skip inner planets, if inbb flag is False:
-		if not inbb:
-			if name in ['Venus', 'Earth', 'Mars']:
-				continue
+		if name in inner_planets and inbb is False:
+			continue
+		
+		if name == '67P/C-G' and cg is False:
+			continue
 		
 		mass = sel_pl['Mass']
 		planet = Planet(name, mass)

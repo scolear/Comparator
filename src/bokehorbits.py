@@ -83,28 +83,32 @@ def main():
 		dataframe = pd.read_csv(path, delim_whitespace = True, float_precision = 'high')
 	
 		source = ColumnDataSource(dataframe)
+		
+		name = 'Jupiter'
+		namex = name+'X'
+		namey = name+'Y'
 	
 		if nombre[:nombre.rfind('_')] == 'RK4':
 			r, g, b = 255, 0, 0
-			pageRK4.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r, g, b), fill_alpha = alpha_arr_fix[i], line_color = 'black', legend = nombre)
-			page1.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r, g, b), fill_alpha = alpha_arr_fix[i], line_color = 'black', legend = nombre)
+			pageRK4.circle(x = namex, y = namey, source = source, size = circle_size, color = (r, g, b), fill_alpha = alpha_arr_fix[i], line_color = 'black', legend = nombre)
+			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = (r, g, b), fill_alpha = alpha_arr_fix[i], line_color = 'black', legend = nombre)
 			i += 1
 		elif nombre[:nombre.rfind('_')] == 'E':
 			r, g, b = 0, 0, 255
-			pageE.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = ((r+5*ts_tol), g+10*ts_tol, b), fill_alpha = alpha_arr_fix[j], line_color = 'black', legend = nombre)
-			page1.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = ((r+5*ts_tol), g+10*ts_tol, b), fill_alpha = alpha_arr_fix[j], line_color = 'black', legend = nombre)
+			pageE.circle(x = namex, y = namey, source = source, size = circle_size, color = ((r+5*ts_tol), g+10*ts_tol, b), fill_alpha = alpha_arr_fix[j], line_color = 'black', legend = nombre)
+			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = ((r+5*ts_tol), g+10*ts_tol, b), fill_alpha = alpha_arr_fix[j], line_color = 'black', legend = nombre)
 			j += 1
 		
 		elif nombre[:nombre.rfind('_')] == 'RKDP':
 			r, g, b = 0, 255, 0
-			pageRKDP.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
-			page1.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
+			pageRKDP.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
+			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
 			k += 1
 		
 		elif nombre[:nombre.rfind('_')] == 'V':
 			r, g, b = 255, 255, 0
-			pageV.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[l], line_color = 'black', legend = nombre)
-			page1.circle(x='67P/C-GX', y= '67P/C-GY', source = source, size = circle_size, color = (r, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[l], line_color = 'black', legend = nombre)
+			pageV.circle(x = namex, y = namey, source = source, size = circle_size, color = (r, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[l], line_color = 'black', legend = nombre)
+			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = (r, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[l], line_color = 'black', legend = nombre)
 			l += 1
 			
 	page1.legend.location = "bottom_left"
