@@ -15,7 +15,7 @@ def integrator_choice(x):
 def timestep_range(x):
 	n = x[1]-x[0] + 1
 	print("Fixed-timestep simulations will run {0} times. \n".format(n))
-	print("Adaptive Runge-Kutta will start with a timestep of {0} days. \n".format(x[0]))
+	print("Adaptive Runge-Kutta will start with a timestep of {0} days. \n".format(x[1]))
 	return x
 
 def error_range(x):

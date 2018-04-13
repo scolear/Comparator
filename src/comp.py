@@ -171,7 +171,7 @@ def main():
 		
 			tol = pow(10, -k)
 			print('{} tolerance:'.format(tol), end='\t')
-			dT = ts_range_min
+			dT = ts_range_max
 			T, step = Reset(planets, T, step)
 			name = 'RKDP_' + str(k)
 			filename = '.' + sep + 'logs' + sep + 'output_RKDP_' + str(k) + '.csv'

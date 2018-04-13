@@ -27,10 +27,10 @@ class Planet:
 		
 	def force(self, other):
 	
-		ms = self.mass * other.mass
-		dist = other.pos - self.pos
+		mass_product = self.mass * other.mass
+		distance = other.pos - self.pos
 		
-		fr = G * ms * dist / (norm(dist)**3)
+		fr = G * mass_product * distance / (norm(distance)**3)
 		return fr
 		
 		
