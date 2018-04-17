@@ -53,7 +53,7 @@ w_ts_range = interactive(timestep_range, x = widgets.IntRangeSlider(
 ))
 
 w_err_range = interactive(error_range, x = widgets.IntRangeSlider(
-	value=[5, 7],
+	value=[5, 6],
 	min=4,
 	max=10,
 	step=1,

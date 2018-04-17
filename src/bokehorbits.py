@@ -16,8 +16,8 @@ def page_setup(pages, df_JPL_CG, df_JPL_JUP, hover):
 	sourceJUP = ColumnDataSource(df_JPL_JUP)
 
 	for page in pages:
-		page.line(x = 'X', y = 'Y', source = sourceCG, line_color = 'black', line_dash = 'solid', legend = 'JPL_CG')
-		page.line(x = 'X', y = 'Y', source = sourceJUP, line_color = 'gray', line_dash = [10, 140], line_width = 1, legend = 'JPL_JUP')
+		page.line(x = 'x', y = 'y', source = sourceCG, line_color = 'black', line_dash = 'solid', legend = 'JPL_CG')
+		page.line(x = 'x', y = 'y', source = sourceJUP, line_color = 'gray', line_dash = [10, 140], line_width = 1, legend = 'JPL_JUP')
 		page.add_tools(hover)
 		page.yaxis.axis_label = "Y [AU]"
 		page.xaxis.axis_label = "X [AU]"
@@ -37,12 +37,15 @@ def main():
 	tol_range_max = w_err_range.result[1]
 	tol_range_min = w_err_range.result[0]	
 
-	df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
-	df_JPL_CG = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	# df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	# df_JPL_CG = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	
+	df_JPL_JUP = JPL_JUP[0]
+	df_JPL_CG = JPL_CG[0]
 	
 	# Creating T column of JPL dataframes:
 	for df in [df_JPL_JUP, df_JPL_CG]:
-		elem = df['JDTDB']
+		elem = df['datetime_jd']
 		sera = []
 		for i in range(1, len(elem)):
 			sera.append(elem[i] - elem[0])
@@ -78,6 +81,7 @@ def main():
 	# Setting up pages and plotting JPL:
 	page_setup(pages, df_JPL_CG, df_JPL_JUP, hover)
 	
+	# Setting up color codings:
 	alpha_arr_fix = np.linspace(0.1, 1.0, num=(ts_range_max - ts_range_min + 1))
 	alpha_arr_ada = np.linspace(0.1, 1.0, num=(tol_range_max - tol_range_min + 1))
 	i, j, k, l = 0, 0, 0, 0
@@ -132,6 +136,7 @@ def main():
 		
 	tabs = Tabs(tabs = tablist)
 	show(tabs)
+	
 	
 if __name__ == "__main__":
 	main()
