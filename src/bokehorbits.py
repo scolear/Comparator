@@ -37,12 +37,15 @@ def main():
 	tol_range_max = w_err_range.result[1]
 	tol_range_min = w_err_range.result[0]	
 
-	df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
-	df_JPL_CG = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	# df_JPL_JUP = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	# df_JPL_CG = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+	
+	df_JPL_JUP = JPL_JUP[0]
+	df_JPL_CG = JPL_CG[0]
 	
 	# Creating T column of JPL dataframes:
 	for df in [df_JPL_JUP, df_JPL_CG]:
-		elem = df['JDTDB']
+		elem = df['datetime_jd']
 		sera = []
 		for i in range(1, len(elem)):
 			sera.append(elem[i] - elem[0])
