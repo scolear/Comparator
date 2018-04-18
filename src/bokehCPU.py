@@ -2,6 +2,8 @@ from glob import iglob
 from os import sep
 
 import pandas as pd
+import numpy as np
+from scipy import stats
 
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
@@ -16,6 +18,7 @@ PLOT_HEIGHT = 500
 
 
 def all_cpu_tab(df_CPU):
+
 	source = ColumnDataSource(df_CPU)
 	hover = HoverTool(tooltips=[
 		("Name", "@Name"),
@@ -23,7 +26,7 @@ def all_cpu_tab(df_CPU):
 		("CPU Time", "@CPU s")	  
 		], mode ='vline')
 
-	p1 = figure(x_range = list(df_CPU['Name']), y_range = (0, (1.1*df_CPU['CPU'].max())), plot_height = PLOT_HEIGHT,plot_width = PLOT_WIDTH, tools = "save")
+	p1 = figure(x_range = list(df_CPU['Name']), y_range = (0, (1.1*df_CPU['CPU'].max())), plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, tools = "save")
 
 	cmap = factor_cmap('Name', palette = viridis(len(list(df_CPU['Name']))), factors = list(df_CPU['Name']))
 
@@ -39,7 +42,7 @@ def all_cpu_tab(df_CPU):
 	p1.ygrid.minor_grid_line_color = 'navy'
 	p1.ygrid.minor_grid_line_alpha = 0.1
 	
-	tab = Panel(child = p1, title = 'All: CPU')
+	tab = Panel(child = p1, title = 'CPU: All')
 	return tab
 
 	
@@ -69,31 +72,30 @@ def fix_cpu_tab(df_CPU):
 	p2.ygrid.minor_grid_line_color = 'navy'
 	p2.ygrid.minor_grid_line_alpha = 0.1
 	
-	tab7 = Panel(child = p2, title = 'Fixed: CPU')
+	tab7 = Panel(child = p2, title = 'CPU: Fixed')
 	return tab7
 
 	
 def error_change_tab(dtfrms):
 
 	p3 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
-	mapp = viridis((len(dtfrms))+1)
 	i = 0
 	
 	for name in dtfrms:
 		elem = dtfrms[name]['Etot']
-		ser = []								# This will hold the change
+		ser = []
 		
 		# Calculating change in Total energy by percentage, compared to previous step:
 		for j in range(1, len(elem)):
 			percentage_change = (((elem[j]) - (elem[j-1])) / (elem[j-1])) * 100
-			ser.append(percentage_change)
+			ser.append(-1*percentage_change)
 
 		# Creating new column in dataframe:
 		dtfrms[name]['Ediff'] = pd.Series(ser)
 	
 		line = p3.line(x = dtfrms[name]['T'], y = dtfrms[name]['Ediff'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
 	
-		p3.add_tools(HoverTool(renderers = [line], tooltips = [("Index", "$index"), ("Name", name)]))
+		p3.add_tools(HoverTool(renderers = [line], tooltips = [("Day", "$x{0,0}"), ("Name", name)]))
 		i += 1
 		if i >= 20: 
 			i = 0
@@ -105,28 +107,28 @@ def error_change_tab(dtfrms):
 	p3.xaxis.axis_label = "Time [days]"
 	p3.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
 	
-	tab = Panel(child = p3, title = 'All: Energy change/step')
+	tab = Panel(child = p3, title = 'Total Energy change/step')
 	return tab
 
 	
 def total_energy_tab(dtfrms):
 
 	p4 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
-	mapp = viridis((len(dtfrms))+1)
 	i = 0
 	
 	for name in dtfrms:
 		elem = dtfrms[name]['Etot']
 		ser = []
 		
+		# Calculating change in Total energy by percentage, compared to original value:
 		for j in range(0,len(elem)):
-			ser.append((elem[j]-elem[0])/elem[0])
+			ser.append(-((elem[j]-elem[0])/elem[0]))
 			
 		dtfrms[name]['percTot'] = pd.Series(ser)
 		
 		line = p4.line(x = dtfrms[name]['T'], y = dtfrms[name]['percTot'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
 	
-		p4.add_tools(HoverTool(renderers = [line], tooltips = [("Index", "$index"), ("Name", name)]))
+		p4.add_tools(HoverTool(renderers = [line], tooltips = [("Day", "$x{0,0}"), ("Name", name)]))
 		i += 1
 		if i >= 20: 
 			i = 0
@@ -138,7 +140,62 @@ def total_energy_tab(dtfrms):
 	p4.xaxis.axis_label = "Time [days]"
 	p4.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
 	
-	tab = Panel(child = p4, title = 'All: Energy change')
+	tab = Panel(child = p4, title = 'Total Energy change')
+	return tab
+	
+	
+def drift_vs_cpu_tab(dtfrms, df_CPU):
+
+	p5 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom", x_axis_type = "log")
+	i = 0
+	marker_size = 12
+	
+	hover = HoverTool(tooltips=[
+		("CPU","$y"),
+		("Slope","$x")	
+	])
+	
+	for name in dtfrms:
+		dataframe = dtfrms[name]
+		var = 'percTot'
+		ser = []
+		nam = name[:name.rfind('_')]
+		
+		# Calculating change in Total energy by percentage, compared to original value:
+		for j in range(0,len(dataframe['Etot'])):
+			ser.append(-((dataframe['Etot'][j]-dataframe['Etot'][0])/dataframe['Etot'][0]))
+			
+		dtfrms[name]['percTot'] = pd.Series(ser)
+		
+		# Linear regression fitting on the change of Total Energy:
+		y = np.array(dataframe[var])
+		x = np.array(dataframe['T'])
+		slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
+		slope = abs(slope)
+		
+		# Getting CPU time for method:
+		selected_df = df_CPU[df_CPU['Name'] == name].copy()
+		CPU_value = selected_df['CPU']
+		
+		if nam == 'RK4':
+			p5.circle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+		elif nam == 'E':
+			p5.square(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+		elif nam == 'RKDP':
+			p5.inverted_triangle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+		elif nam == 'V':
+			p5.triangle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+		
+		i += 1
+		
+	p5.title.text = 'Energy drift vs. CPU time'
+	p5.yaxis.axis_label = "CPU time [sec]"
+	p5.xaxis.axis_label = "Energy Drift"
+	p5.xgrid.minor_grid_line_color = 'navy'
+	p5.xgrid.minor_grid_line_alpha = 0.1
+	p5.add_tools(hover)
+	
+	tab = Panel(child = p5, title = 'Energy Drift vs. CPU time')
 	return tab
 	
 	
@@ -169,6 +226,7 @@ def main():
 	tabs_list.append(fix_cpu_tab(df_CPU))
 	tabs_list.append(total_energy_tab(dtfrms))
 	tabs_list.append(error_change_tab(dtfrms))
+	tabs_list.append(drift_vs_cpu_tab(dtfrms,df_CPU))
 	
 	tabs_all = Tabs(tabs=tabs_list)
 	show(tabs_all)
