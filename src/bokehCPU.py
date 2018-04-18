@@ -5,7 +5,7 @@ import pandas as pd
 
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool
+from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter
 from bokeh.models.widgets import Panel, Tabs 
 from bokeh.transform import factor_cmap
 from bokeh.palettes import viridis, inferno, Category20
@@ -100,13 +100,47 @@ def error_change_tab(dtfrms):
 
 	p3.legend.location = 'bottom_right'
 	p3.legend.click_policy = "hide"
-	p3.title.text = 'Total energy change vs. Time'
-	p3.yaxis.axis_label = "Total energy change [%]"
+	p3.title.text = 'Relative Total Energy change vs. Time'
+	p3.yaxis.axis_label = "Change in Total Energy/step [%]"
 	p3.xaxis.axis_label = "Time [days]"
+	p3.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
 	
-	tab = Panel(child = p3, title = 'All: Energy')
+	tab = Panel(child = p3, title = 'All: Energy change')
 	return tab
 
+	
+def total_energy_tab(dtfrms):
+
+	p4 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
+	mapp = viridis((len(dtfrms))+1)
+	i = 0
+	
+	for name in dtfrms:
+		elem = dtfrms[name]['Etot']
+		ser = []
+		
+		for j in range(0,len(elem)):
+			ser.append(abs(elem[j]))
+			
+		dtfrms[name]['AbsE'] = pd.Series(ser)
+		
+		line = p4.line(x = dtfrms[name]['T'], y = dtfrms[name]['AbsE'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
+	
+		p4.add_tools(HoverTool(renderers = [line], tooltips = [("Index", "$index"), ("Name", name)]))
+		i += 1
+		if i >= 20: 
+			i = 0
+
+	p4.legend.location = 'bottom_right'
+	p4.legend.click_policy = "hide"
+	p4.title.text = 'Total Energy vs. Time'
+	p4.yaxis.axis_label = "|Total Energy|"
+	p4.xaxis.axis_label = "Time [days]"
+	p4.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
+	
+	tab = Panel(child = p4, title = 'All: Total Energy')
+	return tab
+	
 	
 def path_to_dataframes(path):
 	""" This function reads every log file in 'path', 
@@ -133,6 +167,7 @@ def main():
 	tabs_list = []
 	tabs_list.append(all_cpu_tab(df_CPU))
 	tabs_list.append(fix_cpu_tab(df_CPU))
+	tabs_list.append(total_energy_tab(dtfrms))
 	tabs_list.append(error_change_tab(dtfrms))
 	
 	tabs_all = Tabs(tabs=tabs_list)
