@@ -97,7 +97,7 @@ def main():
 	
 	for ts in range(ts_range_min, ts_range_max+1):
 	
-		print(f'Querying HORIZONS with timestep: {ts}...')
+		print(f'Querying HORIZONS with timestep: {ts} days...')
 		
 		# Jupiter data:
 		Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})

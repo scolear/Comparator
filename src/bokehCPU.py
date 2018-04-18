@@ -105,7 +105,7 @@ def error_change_tab(dtfrms):
 	p3.xaxis.axis_label = "Time [days]"
 	p3.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
 	
-	tab = Panel(child = p3, title = 'All: Energy change')
+	tab = Panel(child = p3, title = 'All: Energy change/step')
 	return tab
 
 	
@@ -120,11 +120,11 @@ def total_energy_tab(dtfrms):
 		ser = []
 		
 		for j in range(0,len(elem)):
-			ser.append(abs(elem[j]))
+			ser.append((elem[j]-elem[0])/elem[0])
 			
-		dtfrms[name]['AbsE'] = pd.Series(ser)
+		dtfrms[name]['percTot'] = pd.Series(ser)
 		
-		line = p4.line(x = dtfrms[name]['T'], y = dtfrms[name]['AbsE'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
+		line = p4.line(x = dtfrms[name]['T'], y = dtfrms[name]['percTot'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
 	
 		p4.add_tools(HoverTool(renderers = [line], tooltips = [("Index", "$index"), ("Name", name)]))
 		i += 1
@@ -133,12 +133,12 @@ def total_energy_tab(dtfrms):
 
 	p4.legend.location = 'bottom_right'
 	p4.legend.click_policy = "hide"
-	p4.title.text = 'Total Energy vs. Time'
-	p4.yaxis.axis_label = "|Total Energy|"
+	p4.title.text = 'Accumulated Total Energy change vs. Time'
+	p4.yaxis.axis_label = "Total Energy change [%]"
 	p4.xaxis.axis_label = "Time [days]"
 	p4.xaxis[0].formatter = NumeralTickFormatter(format="0,0")
 	
-	tab = Panel(child = p4, title = 'All: Total Energy')
+	tab = Panel(child = p4, title = 'All: Energy change')
 	return tab
 	
 	
