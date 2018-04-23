@@ -53,6 +53,7 @@ def process_rkdp_err(path):
 	p.yaxis.axis_label = "Error (scaled)"
 	p.ygrid.minor_grid_line_color = 'navy'
 	p.ygrid.minor_grid_line_alpha = 0.1
+	p.y_range.start = -0.1
 	
 	error_box = BoxAnnotation(top=1, bottom = 0, fill_alpha=0.1, fill_color='gray')
 	p.add_layout(error_box)
@@ -64,6 +65,7 @@ def process_rkdp_err(path):
 	
 	p2.yaxis.axis_label = "Time Step [days]"
 	p2.xaxis.axis_label = "Time [days]"
+	p2.y_range.start = 0
 	p2.add_tools(HoverTool(tooltips = [("Time", "@T{0}"), ("Step size", "@StepSize")], mode = 'vline'))
 	
 	lay = column(p, p2)							# Outlay

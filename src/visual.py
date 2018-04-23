@@ -10,7 +10,7 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-path = '.' + sep + 'logs' + sep + 'output_RKDP_'+str(w_err_range.result[1])+'.csv'
+path = '.' + sep + 'logs' + sep + 'output_RKDP_'+str(w_err_range.result[0])+'.csv'
 df_RK = pd.read_csv(path, delim_whitespace = True, float_precision = 'high')
 
 fig1, ax1 = plt.subplots(1,1)

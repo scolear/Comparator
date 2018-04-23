@@ -10,7 +10,7 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter
 from bokeh.models.widgets import Panel, Tabs 
 from bokeh.transform import factor_cmap
-from bokeh.palettes import viridis, inferno, Category20
+from bokeh.palettes import viridis, inferno, Category20, Category10
 output_notebook()
 
 PLOT_WIDTH = 700
@@ -117,15 +117,7 @@ def total_energy_tab(dtfrms):
 	i = 0
 	
 	for name in dtfrms:
-		elem = dtfrms[name]['Etot']
-		ser = []
-		
-		# Calculating change in Total energy by percentage, compared to original value:
-		for j in range(0,len(elem)):
-			ser.append(-((elem[j]-elem[0])/elem[0]))
-			
-		dtfrms[name]['percTot'] = pd.Series(ser)
-		
+
 		line = p4.line(x = dtfrms[name]['T'], y = dtfrms[name]['percTot'], legend = name, line_width = 3, line_color = Category20[20][i], line_join = "round",)
 	
 		p4.add_tools(HoverTool(renderers = [line], tooltips = [("Day", "$x{0,0}"), ("Name", name)]))
@@ -150,25 +142,13 @@ def drift_vs_cpu_tab(dtfrms, df_CPU):
 	i = 0
 	marker_size = 12
 	
-	hover = HoverTool(tooltips=[
-		("CPU","$y"),
-		("Slope","$x")	
-	])
-	
 	for name in dtfrms:
+	
 		dataframe = dtfrms[name]
-		var = 'percTot'
-		ser = []
 		nam = name[:name.rfind('_')]
 		
-		# Calculating change in Total energy by percentage, compared to original value:
-		for j in range(0,len(dataframe['Etot'])):
-			ser.append(-((dataframe['Etot'][j]-dataframe['Etot'][0])/dataframe['Etot'][0]))
-			
-		dtfrms[name]['percTot'] = pd.Series(ser)
-		
 		# Linear regression fitting on the change of Total Energy:
-		y = np.array(dataframe[var])
+		y = np.array(dataframe['percTot'])
 		x = np.array(dataframe['T'])
 		slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 		slope = abs(slope)
@@ -178,22 +158,25 @@ def drift_vs_cpu_tab(dtfrms, df_CPU):
 		CPU_value = selected_df['CPU']
 		
 		if nam == 'RK4':
-			p5.circle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+			m = p5.circle(x = slope, y = CPU_value, size = marker_size, color = Category10[4][3], line_color = 'black', legend = nam)
 		elif nam == 'E':
-			p5.square(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+			m = p5.square(x = slope, y = CPU_value, size = marker_size, color = Category10[4][0], line_color = 'black', legend = nam)
 		elif nam == 'RKDP':
-			p5.inverted_triangle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+			m = p5.triangle(x = slope, y = CPU_value, size = marker_size, color = Category10[4][2], line_color = 'black', legend = nam)
 		elif nam == 'V':
-			p5.triangle(x = slope, y = CPU_value, size = marker_size, color = Category20[20][i], line_color = 'black', legend = name)
+			m = p5.inverted_triangle(x = slope, y = CPU_value, size = marker_size, color = Category10[4][1], line_color = 'black', legend = nam)
 		
+		p5.add_tools(HoverTool(renderers = [m], tooltips = [("CPU","$y"), ("Slope","$x"), ("Method", name)]))
 		i += 1
-		
+		if i >= 20: 
+			i = 0
+			
 	p5.title.text = 'Energy drift vs. CPU time'
 	p5.yaxis.axis_label = "CPU time [sec]"
+	p5.y_range.start = 0
 	p5.xaxis.axis_label = "Energy Drift"
 	p5.xgrid.minor_grid_line_color = 'navy'
 	p5.xgrid.minor_grid_line_alpha = 0.1
-	p5.add_tools(hover)
 	
 	tab = Panel(child = p5, title = 'Energy Drift vs. CPU time')
 	return tab
@@ -212,6 +195,20 @@ def path_to_dataframes(path):
 		dataframe = pd.read_csv(patho, delim_whitespace = True, float_precision = 'high')
 		dtfrms_dict[nombre] = dataframe
 	return dtfrms_dict
+
+
+def add_E_change_column(dtfrms):
+
+	for name in dtfrms:
+		elem = dtfrms[name]['Etot']
+		ser = []
+		
+		for j in range(0,len(elem)):
+			ser.append(-((elem[j]-elem[0])/elem[0]))
+			
+		dtfrms[name]['percTot'] = pd.Series(ser)
+		
+	return dtfrms
 	
 	
 def main():
@@ -220,6 +217,8 @@ def main():
 	df_CPU.Method = df_CPU.Method.astype(str)
 
 	dtfrms = path_to_dataframes('.' + sep + 'logs' + sep + 'output_*')
+	
+	dtfrms = add_E_change_column(dtfrms)
 	
 	tabs_list = []
 	tabs_list.append(all_cpu_tab(df_CPU))
