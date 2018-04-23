@@ -32,7 +32,7 @@ def main():
 
 	except NameError:						# Defaults if not interactive
 		print('Running with default values.')
-		method = 'All'
+		method = ('Euler', 'Verlet', 'RK4', 'RKDP')
 		Ttot = 36524
 		cg = True
 		inbb = False
@@ -62,7 +62,7 @@ def main():
 			f"\nTimeStep range: {ts_range_min} - {ts_range_max}",
 			f"\nTolerance range: 1.0E-{tol_range_min} - 1.0E-{tol_range_max}\n")
 
-	if method == 'All' or method == 'Euler':
+	if 'Euler' in method:
 		print('Euler integration...')
 	
 		for dT in range(ts_range_min, ts_range_max+1):
@@ -98,7 +98,7 @@ def main():
 			cpu_logs.write('fix E '+name+' '+str(dT)+' '+str(cpuE)+'\n')
 			dat_file.close()
 			
-	if method == 'All' or method == 'Verlet':
+	if 'Verlet' in method:
 		print('Verlet integration...')
 	
 		for dT in range(ts_range_min, ts_range_max+1):
@@ -129,7 +129,7 @@ def main():
 			cpu_logs.write('fix V '+name+' '+str(dT)+' '+str(cpuV)+'\n')
 
 			
-	if method == 'All' or method == 'RK4':
+	if 'RK4' in method:
 		print('RK4 integration...')
 		nodes = (2*N)
 		
@@ -167,7 +167,7 @@ def main():
 			cpu_logs.write('fix RK4 '+name+' '+str(dT)+' '+str(cpuRK4)+'\n')
 			
 			
-	if method == 'All' or method == 'RKDP':
+	if 'RKDP' in method:
 		print('Runge-Kutta Dormand-Prince integration...')
 		
 		for k in range(tol_range_min, tol_range_max + 1):
