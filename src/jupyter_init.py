@@ -66,14 +66,11 @@ w_err_range = interactive(error_range, x = widgets.IntRangeSlider(
 	readout_format='d',
 ))
 
-w_Ich = interactive(integrator_choice, x = widgets.ToggleButtons(
-	options = ['Euler', 'Verlet', 'RK4', 'RKDP', 'All'],
-	value = 'All',
+w_Ich = interactive(integrator_choice, x = widgets.SelectMultiple(
+	options = ['Euler', 'Verlet', 'RK4', 'RKDP'],
+	value = ['Euler', 'Verlet', 'RK4', 'RKDP'],
 	description = '1.) Integrator:',
-	disabled = False,
-	button_style = '',
-	layout = Layout(flex_flow='column'),
-	tooltips = ['A simple forward Euler integrator', 'Velocity Verlet, a symplectic integrator', 'Fixed-timestep Runge-Kutta 4', 'Adaptive Runge-Kutta Dormand-Prince integrator', 'Run all integrators successively']
+	disabled = False
 ))
 
 w_cg = interactive(cg_choice, x = widgets.Checkbox(
