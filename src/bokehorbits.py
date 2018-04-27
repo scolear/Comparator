@@ -86,7 +86,8 @@ def main():
 	alpha_arr_ada = np.linspace(0.1, 1.0, num=(tol_range_max - tol_range_min + 1))
 	i, j, k, l = 0, 0, 0, 0
 	
-	for path in iglob('.' + sep + 'logs' + sep + 'output_*'):					# Reading every dataframe produced by 'comp.py'
+	# Reading every dataframe produced by 'comp.py':
+	for path in iglob('.' + sep + 'logs' + sep + 'output_*'):					
 
 		nombre = (path.rstrip('.csv')).lstrip('.' + sep + 'logs' + sep + 'output_')
 		ts_tol = int((path[path.rfind('_') + 1:]).rstrip('.csv'))

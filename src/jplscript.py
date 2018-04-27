@@ -94,24 +94,44 @@ def main():
 	# Creating the necessary date format for querying:
 	endy, endm, endd = jd_to_date(2415020.5 + Ttot)
 	end = str(endy)+'-'+str(endm)+'-'+str(endd)
+	ts = ts_range_min
 	
-	for ts in range(ts_range_min, ts_range_max+1):
+	print(f'Querying HORIZONS with a {ts} days timestep...')
 	
-		print(f'Querying HORIZONS with timestep: {ts} days...')
+	# Jupiter data:
+	Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+	vec = Jup.vectors()
+	
+	df = vec.to_pandas()
+	JPL_JUP.append(df)
+	
+	# 67P/C-G data:
+	CG = Horizons(id = '900681', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+	vec2 = CG.vectors()
+	
+	df2 = vec2.to_pandas()
+	JPL_CG.append(df2)
+	
+	
+	# This following part is reduntant, but preserved in case there is need to implement a comparison with JPL data.
+	
+	# for ts in range(ts_range_min, ts_range_max+1):
+	
+		# print(f'Querying HORIZONS with timestep: {ts} days...')
 		
-		# Jupiter data:
-		Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
-		vec = Jup.vectors()
+		# # Jupiter data:
+		# Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+		# vec = Jup.vectors()
 		
-		df = vec.to_pandas()
-		JPL_JUP.append(df)
+		# df = vec.to_pandas()
+		# JPL_JUP.append(df)
 		
-		# 67P/C-G data:
-		CG = Horizons(id = '900681', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
-		vec2 = CG.vectors()
+		# # 67P/C-G data:
+		# CG = Horizons(id = '900681', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+		# vec2 = CG.vectors()
 		
-		df2 = vec2.to_pandas()
-		JPL_CG.append(df2)
+		# df2 = vec2.to_pandas()
+		# JPL_CG.append(df2)
 		
 if __name__ == "__main__":
 	main()

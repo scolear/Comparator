@@ -223,7 +223,7 @@ def clear_logs():
 	
 	del_choice = input('Do you want to clear library of previous logs? [y/n]: ')
 	
-	if del_choice == 'y' or del_choice == 'yes':
+	if del_choice in ['y', 'yes']:
 		for path in iglob('.' + sep + 'logs' + sep + 'output*'):
 			os.remove(path)
 		os.remove('.' + sep + 'logs' + sep + 'CPUlogs.csv')
@@ -232,6 +232,9 @@ def clear_logs():
 		print("Library cleared.\n")
 		return 1
 		
-	elif del_choice == 'n' or del_choice == 'no':
+	elif del_choice in ['n', 'no']:
 		print('Leaving previous logs intact.\n')
 		return 0
+		
+	else:
+		raise ValueError('Please enter y/yes or n/no.')
