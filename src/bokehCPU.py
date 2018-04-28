@@ -47,8 +47,9 @@ def all_cpu_tab(df_CPU):
 
 	
 def fix_cpu_tab(df_CPU):
-	##################### Here comes the second tab, containing Fixed TimeStep methods:
-
+	"""
+	Here comes the second tab, containing Fixed TimeStep methods:
+	"""
 	dfix = df_CPU[df_CPU['Type'] == 'fix'].copy()
 	dfix.Step = dfix.Step.astype(str)
 	group = dfix.groupby(['Step', 'Method'])
