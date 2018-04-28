@@ -1,9 +1,18 @@
 # Comparator
 \- comparison of numerical integration schemes -
 
+This software was designed to showcase certain aspects of different numerical integration algorithms used in celestial mechanics (and many other fields dealing with dynamical systems). The methods implemented as of now:
+
+1. Three fixed-timestep methods:
+  * Euler's method
+  * Verlet's symplectic method
+  * "Classical" Runge-Kutta 4th order method
+1. One adaptive method:
+  * Runge-Kutta Dormand-Prince 5(4)
+
 # How-to
 
-The user is meant to interact with the Jupyter Notebook called Comparator.ipynb. Since it calls local files using linemagics, the surrounding folders must be present on the users local machine.
+The user is meant to interact with the Jupyter Notebook called Comparator.ipynb. Since it calls local files using linemagics, the **surrounding folders must be present** on the users local machine.
 
 To run the software as it is intended:
 
@@ -24,5 +33,6 @@ The underlying source code is written in Python 3. It makes use of several packa
 1. pandas
 1. numpy
 1. bokeh
+1. astroquery
 
-*Hint:* All of the above are part of the standard Anaconda distribution. 
+*Hint:* The easiest way is to handle all of these through the Anaconda distribution.
