@@ -7,7 +7,7 @@ This software was designed to showcase certain aspects of different numerical in
   * Euler's method
   * Verlet's symplectic method
   * "Classical" Runge-Kutta 4th order method
-1. One adaptive method:
+2. One adaptive method:
   * Runge-Kutta Dormand-Prince 5(4)
 
 # How-to
