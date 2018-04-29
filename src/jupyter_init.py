@@ -39,7 +39,7 @@ w_Ttot = interactive(total_choice, x = widgets.BoundedIntText(
 ))
 
 w_ts_range = interactive(timestep_range, x = widgets.IntRangeSlider(
-	value=[7, 9],
+	value=[5, 7],
 	min=1,
 	max=20,
 	step=1,
@@ -53,7 +53,7 @@ w_ts_range = interactive(timestep_range, x = widgets.IntRangeSlider(
 ))
 
 w_err_range = interactive(error_range, x = widgets.IntRangeSlider(
-	value=[5, 6],
+	value=[7, 8],
 	min=4,
 	max=10,
 	step=1,

@@ -7,13 +7,13 @@ from scipy import stats
 
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter
+from bokeh.models import ColumnDataSource, HoverTool, NumeralTickFormatter, Label
 from bokeh.models.widgets import Panel, Tabs 
 from bokeh.transform import factor_cmap
 from bokeh.palettes import viridis, inferno, Category20, Category10
 output_notebook()
 
-PLOT_WIDTH = 700
+PLOT_WIDTH = 780
 PLOT_HEIGHT = 500
 
 
@@ -77,7 +77,7 @@ def fix_cpu_tab(df_CPU):
 	return tab7
 
 	
-def error_change_tab(dtfrms):
+def energy_change_perstep_tab(dtfrms):
 
 	p3 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
 	i = 0
@@ -112,7 +112,7 @@ def error_change_tab(dtfrms):
 	return tab
 
 	
-def total_energy_tab(dtfrms):
+def total_energy_change_tab(dtfrms):
 
 	p4 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom")
 	i = 0
@@ -137,11 +137,11 @@ def total_energy_tab(dtfrms):
 	return tab
 	
 	
-def drift_vs_cpu_tab(dtfrms, df_CPU):
-
+def drift_vs_cpu_tab(dtfrms, df_CPU, label):
+ 
 	p5 = figure(plot_height = PLOT_HEIGHT, plot_width = PLOT_WIDTH, toolbar_location="right", tools = "pan, wheel_zoom, box_zoom, reset, save", active_drag = "box_zoom", x_axis_type = "log")
 	i = 0
-	marker_size = 12
+	marker_size = 13
 	
 	for name in dtfrms:
 	
@@ -179,6 +179,8 @@ def drift_vs_cpu_tab(dtfrms, df_CPU):
 	p5.xgrid.minor_grid_line_color = 'navy'
 	p5.xgrid.minor_grid_line_alpha = 0.1
 	
+	p5.add_layout(label)
+	
 	tab = Panel(child = p5, title = 'Energy Drift vs. CPU time')
 	return tab
 	
@@ -213,20 +215,31 @@ def add_E_change_column(dtfrms):
 	
 	
 def main():
-
+	
+	try:
+		Ttot = w_Ttot.result
+	except NameError:
+		Ttot = 36524
+	
+	# Creating annotation text:
+	label_text = 'Integration time: '+str(Ttot)+' days'
+	label = Label(x=280, y=397, x_units='screen', y_units='screen', 
+			text=label_text, render_mode='canvas',  border_line_color='black', border_line_alpha=0.1, background_fill_color='white', background_fill_alpha=1.0)
+	
 	df_CPU = pd.read_csv('.' + sep + 'logs' + sep + 'CPUlogs.csv', delim_whitespace = True, float_precision = 'high')
 	df_CPU.Method = df_CPU.Method.astype(str)
 
+	# Creating dataframe dictionary:
 	dtfrms = path_to_dataframes('.' + sep + 'logs' + sep + 'output_*')
-	
 	dtfrms = add_E_change_column(dtfrms)
 	
+	# Constructing the tabular structure:
 	tabs_list = []
 	tabs_list.append(all_cpu_tab(df_CPU))
 	tabs_list.append(fix_cpu_tab(df_CPU))
-	tabs_list.append(total_energy_tab(dtfrms))
-	tabs_list.append(error_change_tab(dtfrms))
-	tabs_list.append(drift_vs_cpu_tab(dtfrms,df_CPU))
+	tabs_list.append(total_energy_change_tab(dtfrms))
+	tabs_list.append(energy_change_perstep_tab(dtfrms))
+	tabs_list.append(drift_vs_cpu_tab(dtfrms, df_CPU, label))
 	
 	tabs_all = Tabs(tabs=tabs_list)
 	show(tabs_all)

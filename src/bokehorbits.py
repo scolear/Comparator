@@ -125,7 +125,9 @@ def JPL_query(Ttot, ts):
 		vec2 = CG.vectors()
 	
 		df2 = vec2.to_pandas()
-	
+		
+		print('Done.')
+		
 	return df1, df2
 	
 
@@ -157,14 +159,14 @@ def main():
 
 	pages = []
 
-	plot_width = 700
+	plot_width = 780
 	plot_height = 500
 	circle_size = 6
 
 	hover = HoverTool(tooltips=[
 		("index", "$index"),
 		("(x,y)", "($x, $y)"),
-		("Day", "@T"),
+		("Day", "@T{0,0}"),
 	])
 
 	page1 = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom")
@@ -176,10 +178,10 @@ def main():
 	pageV = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom") 
 	pages.append(pageV)
 
-	pageRK4 = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom")
+	pageRK4 = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom", x_range = pageV.x_range, y_range = pageV.y_range)
 	pages.append(pageRK4)
 
-	pageRKDP = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom")
+	pageRKDP = figure(plot_width = plot_width, plot_height = plot_height, active_drag = "box_zoom", x_range = pageV.x_range, y_range = pageV.y_range)
 	pages.append(pageRKDP)
 	
 	# Setting up pages and plotting JPL:
@@ -216,8 +218,8 @@ def main():
 		
 		elif nombre[:nombre.rfind('_')] == 'RKDP':
 			r, g, b = 0, 255, 0
-			pageRKDP.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
-			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_fix[k], line_color = 'black', legend = nombre)
+			pageRKDP.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_ada[k], line_color = 'black', legend = nombre)
+			page1.circle(x = namex, y = namey, source = source, size = circle_size, color = (r+5*ts_tol, g, b+10*ts_tol), fill_alpha = alpha_arr_ada[k], line_color = 'black', legend = nombre)
 			k += 1
 		
 		elif nombre[:nombre.rfind('_')] == 'V':

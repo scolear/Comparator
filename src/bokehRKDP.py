@@ -15,7 +15,7 @@ from bokeh.models.widgets import Panel, Tabs
 from bokeh.layouts import column
 output_notebook()
 
-PLOT_WIDTH = 700
+PLOT_WIDTH = 780
 PLOT_HEIGHT = 500
 
 def process_rkdp_err(path):
