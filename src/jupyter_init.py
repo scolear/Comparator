@@ -32,7 +32,7 @@ def innpl_choice(x):
 w_Ttot = interactive(total_choice, x = widgets.BoundedIntText(
 	value = 36524,
 	min = 10,				#integration time limits! [days]
-	max = 3652422,			
+	max = 36524250,			
 	description = '2.) Total integration time [days]:',
 	style = style,
 	disabled = False
