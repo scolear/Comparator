@@ -90,7 +90,7 @@ def page_setup(pages, df_JPL_CG, df_JPL_JUP, hover):
 
 	for page in pages:
 		page.line(x = 'x', y = 'y', source = sourceCG, line_color = 'black', line_dash = 'solid', legend = 'JPL_CG')
-		page.line(x = 'x', y = 'y', source = sourceJUP, line_color = 'gray', line_dash = [10, 140], line_width = 1, legend = 'JPL_JUP')
+		page.line(x = 'x', y = 'y', source = sourceJUP, line_color = 'gray', line_dash = [10, 120], line_width = 1, legend = 'JPL_JUP')
 		page.add_tools(hover)
 		page.yaxis.axis_label = "Y [AU]"
 		page.xaxis.axis_label = "X [AU]"
