@@ -18,7 +18,8 @@ PLOT_HEIGHT = 500
 
 
 def all_cpu_tab(df_CPU):
-
+	""" Creates the tab showing every methods' CPU time, from reading in the dataframe supplied to it.
+	"""
 	source = ColumnDataSource(df_CPU)
 	hover = HoverTool(tooltips=[
 		("Name", "@Name"),
