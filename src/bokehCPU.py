@@ -178,7 +178,7 @@ def drift_vs_cpu_tab(dtfrms, df_CPU, label):
 	p5.y_range.start = 0
 	p5.xaxis.axis_label = "Energy Drift"
 	p5.xgrid.minor_grid_line_color = 'navy'
-	p5.xgrid.minor_grid_line_alpha = 0.1
+	p5.xgrid.minor_grid_line_alpha = 0.2
 	
 	p5.add_layout(label)
 	

@@ -109,25 +109,35 @@ def JPL_query(Ttot, ts):
 		df2 = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
 		
 	else:
-		endy, endm, endd = jd_to_date(JD_period_end)
-		end = str(endy) + '-' + str(endm) + '-' + str(endd)
-	
-		print(f'Querying HORIZONS with a {ts} days timestep...')
-	
-		# Jupiter data:
-		Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
-		vec = Jup.vectors()
-	
-		df1 = vec.to_pandas()
-	
-		# 67P/C-G data:
-		CG = Horizons(id = '900681', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
-		vec2 = CG.vectors()
-	
-		df2 = vec2.to_pandas()
+		try:
+			# Creating the necessary date format for querying:
+			endy, endm, endd = jd_to_date(JD_period_end)
+			end = str(endy) + '-' + str(endm) + '-' + str(endd)
 		
-		print('Done.')
+			print(f'Querying HORIZONS with a {ts} days timestep...')
 		
+			# Jupiter data:
+			Jup = Horizons(id = '599', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+			vec = Jup.vectors()
+		
+			df1 = vec.to_pandas()
+		
+			# 67P/C-G data:
+			CG = Horizons(id = '900681', id_type = 'id', location = '500@0', epochs = {'start': '1900-01-01', 'stop': end, 'step': (str(ts)+'d')})
+			vec2 = CG.vectors()
+		
+			df2 = vec2.to_pandas()
+			
+			print('Done.')
+			
+		except:
+			# In case there is no internet, or querying fails anyhow, use standard addendum logs:
+			
+			print('Something went wrong with the query. Using previously downloaded HORIZONS data.')
+			
+			df1 = pd.read_csv('.' + sep + 'addendum' + sep + 'Jupiter_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+			df2 = pd.read_csv('.' + sep + 'addendum' + sep + '67P_1900_2000_1.csv', skipinitialspace = True, float_precision = 'high')
+			
 	return df1, df2
 	
 
@@ -236,6 +246,8 @@ def main():
 	
 	for page in pages:
 		page.legend.click_policy = "hide"
+		page.circle([0],[0], size = circle_size+2, fill_color = 'white', line_color = 'black', line_width = 2)
+		page.circle([0],[0], size = 2, fill_color = 'black')
 		title = ['All', 'Euler', 'Verlet', 'RK4', 'RKDP']
 		tab = Panel(child = page, title = title[z])
 		tablist.append(tab)
