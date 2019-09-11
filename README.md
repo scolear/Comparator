@@ -16,13 +16,7 @@ The user is meant to interact with the Jupyter Notebook called Comparator.ipynb.
 
 To run the software as it is intended:
 
-1. Download the following:
-   * Comparator.ipynb
-   * *src* folder
-   * *addendum* folder
-   * *logs* folder
-   * *Hint:* You could just download the whole master as ZIP.
-   
+1. Clone the repo to your local machine
 1. Run Comparator.ipynb on a local kernel
 1. Follow the instructions therein
 
@@ -33,8 +27,10 @@ The underlying source code is written in Python 3. It makes use of several packa
 1. pandas
 1. numpy
 1. bokeh
-1. astroquery
+1. astroquery from astropy
+1. scipy
+1. matplotlib
 
-*Hint:* The easiest way is to handle all of these through the Anaconda distribution.
+*Hint:* The easiest way is to handle all of these through the Anaconda/Miniconda distribution.
 
 
