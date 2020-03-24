@@ -1,3 +1,8 @@
+# -- Disclaimer --
+
+I started this project with zero knowledge of Python, or even OOP. It was meant to be a learning experience which would also serve as a tool supporting my thesis. It grew to be a bit bigger, but it is very clumsy, and practically unapprochable because of its architecture. 
+Still, I leave it here as a memento.
+
 # Comparator
 \- comparison of numerical integration schemes -
 
@@ -30,7 +35,3 @@ The underlying source code is written in Python 3. It makes use of several packa
 1. astroquery from astropy
 1. scipy
 1. matplotlib
-
-*Hint:* The easiest way is to handle all of these through the Anaconda/Miniconda distribution.
-
-
